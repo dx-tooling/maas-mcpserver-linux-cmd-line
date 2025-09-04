@@ -1,0 +1,44 @@
+{
+  "name": "maas-mcpserver-linux-cmd-line",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev:stdio": "tsx src/server.ts --stdio",
+    "dev:http": "tsx src/server.ts --http",
+    "start:stdio": "node dist/server.js --stdio",
+    "start:http": "node dist/server.js --http",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "quality": "npm run format && npm run lint && npm run typecheck",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.5",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^7.2.1",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.2"
+  }
+}
