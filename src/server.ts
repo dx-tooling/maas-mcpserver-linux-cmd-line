@@ -90,6 +90,17 @@ export async function startHttpSse(port = Number(process.env.PORT || 3000)): Pro
 
   const transports: Record<string, SSEServerTransport> = {};
 
+  // Health check endpoint
+  app.get('/health', (req, res) => {
+    res.status(200).json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      service: 'maas-mcpserver-linux-cmd-line',
+      version: '1.0.0',
+      activeSessions: Object.keys(transports).length
+    });
+  });
+
   app.get('/mcp', async (req, res) => {
     console.log('[sse] GET /mcp – establishing SSE stream');
     const transport = new SSEServerTransport('/messages', res);

@@ -39,10 +39,30 @@ PORT=3000 npm run start:http
 
 The server exposes:
 
+- GET `/health` → Health check endpoint (returns HTTP 200 with service status)
 - GET `/mcp` → Establishes SSE stream (deprecated HTTP+SSE transport)
 - POST `/messages?sessionId=<id>` → JSON-RPC messages from the client
 
 Use an MCP-compatible client to connect via SSE. Manual interaction is non-trivial because the `sessionId` is provided over the SSE stream.
+
+## Health Check
+
+The server provides a health check endpoint at `/health` that returns HTTP 200 when the service is running:
+
+```bash
+curl http://localhost:3000/health
+```
+
+Response:
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-09-10T06:50:40.772Z",
+  "service": "maas-mcpserver-linux-cmd-line",
+  "version": "1.0.0",
+  "activeSessions": 0
+}
+```
 
 ## Running in stdio mode
 
