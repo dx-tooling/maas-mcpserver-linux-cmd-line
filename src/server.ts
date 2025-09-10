@@ -12,7 +12,7 @@ export function createMcpServer() {
   const mcpServer = new McpServer(
     {
       name: 'maas-mcpserver-linux-cmd-line',
-      version: '1.0.1',
+      version: '1.0.2',
     },
     { capabilities: { logging: {} } },
   );
