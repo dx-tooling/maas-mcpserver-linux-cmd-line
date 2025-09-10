@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { spawn } from 'node:child_process';
+import { createWriteStream, mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { IncomingMessage, ServerResponse } from 'node:http';
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -41,20 +43,45 @@ export function createMcpServer() {
       const child = spawn(command, { shell: true, cwd, env: { ...process.env, ...env } });
       let stdout = '';
       let stderr = '';
+      // Ensure log directory exists and open append stream
+      const logPath = '/home/mcp/logs/exec.log';
+      try {
+        mkdirSync(dirname(logPath), { recursive: true });
+      } catch (err) {
+        // ignore logging directory errors
+      }
+      const log = createWriteStream(logPath, { flags: 'a' });
+      log.write(`\n=== ${new Date().toISOString()} $ ${command}\n`);
       child.stdout.on('data', (d: Buffer) => {
         const chunk = d.toString();
         stdout += chunk;
         void mcpServer.sendLoggingMessage({ level: 'info', data: chunk }, extra.sessionId);
+        try {
+          log.write(chunk);
+        } catch (err) {
+          // ignore write errors
+        }
       });
       child.stderr.on('data', (d: Buffer) => {
         const chunk = d.toString();
         stderr += chunk;
         void mcpServer.sendLoggingMessage({ level: 'error', data: chunk }, extra.sessionId);
+        try {
+          log.write(chunk);
+        } catch (err) {
+          // ignore write errors
+        }
       });
 
       const exitCode: number = await new Promise((resolve) => {
         child.on('close', (code) => resolve(code ?? 0));
       });
+      try {
+        log.write(`\n[exit ${exitCode}]\n`);
+        log.end();
+      } catch (err) {
+        // ignore write errors
+      }
 
       return {
         content: [],
@@ -97,7 +124,7 @@ export async function startHttpSse(port = Number(process.env.PORT || 3000)): Pro
       timestamp: new Date().toISOString(),
       service: 'maas-mcpserver-linux-cmd-line',
       version: '1.0.0',
-      activeSessions: Object.keys(transports).length
+      activeSessions: Object.keys(transports).length,
     });
   });
 
